@@ -61,7 +61,11 @@ pytest
 ```
 
 The tests cover the CSV cleaning logic (`clean_rows`, `normalise_header`)
-in `tests/test_csv_cleaner.py`.
+in `tests/test_csv_cleaner.py`, and the file organising logic
+(`organise`, `target_folder_name`, `unique_destination`) in
+`tests/test_file_organizer.py` — including the `--dry-run` preview, hidden
+files being left alone, and name collisions being renamed instead of
+overwritten.
 
 ## License
 
