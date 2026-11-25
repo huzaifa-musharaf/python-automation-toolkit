@@ -21,6 +21,7 @@ pip install -r requirements.txt
 | --- | --- |
 | `scripts/csv_cleaner.py` | Trims whitespace, normalises headers to snake_case, drops empty rows and removes duplicates from a CSV. |
 | `scripts/csv_merge.py` | Merges several CSV files with the same headers into one, with an optional `source_file` column recording where each row came from. |
+| `scripts/json_to_csv.py` | Converts a JSON file holding a list of objects into a CSV, flattening nested objects into dot-separated columns. |
 | `scripts/api_to_csv.py` | Fetches JSON from a REST API, flattens nested objects and writes a CSV. Handles list responses and object responses with a data key. |
 | `scripts/file_organizer.py` | Sorts a folder's files into subfolders by extension (`pdf/`, `jpg/`, …), with a `--dry-run` preview mode and collision-safe renaming. |
 | `scripts/excel_report.py` | Builds an `.xlsx` report from a CSV: the raw data plus a Summary sheet with count, total, average, min and max per category. |
@@ -43,6 +44,13 @@ Combine monthly CSV files with the same headers into one, keeping track of each 
 
 ```bash
 python scripts/csv_merge.py sales_jan.csv sales_feb.csv -o sales_h1.csv --add-source
+```
+
+Turn a JSON export into a spreadsheet, including one wrapped in a `data` key:
+
+```bash
+python scripts/json_to_csv.py products.json -o products.csv
+python scripts/json_to_csv.py response.json -o rows.csv --key data
 ```
 
 Preview how a folder would be organised, then do it for real:
@@ -70,7 +78,10 @@ pytest
 The tests cover the CSV cleaning logic (`clean_rows`, `normalise_header`)
 in `tests/test_csv_cleaner.py`, the CSV merging logic (`merge_tables`)
 in `tests/test_csv_merge.py` — including the `source_file` column and the
-error on mismatched headers — and the file organising logic
+error on mismatched headers — the JSON conversion logic
+(`flatten_record`, `records_to_table`, `load_records`) in
+`tests/test_json_to_csv.py` — including nested objects, the `--key`
+wrapper, and the errors on bad input — and the file organising logic
 (`organise`, `target_folder_name`, `unique_destination`) in
 `tests/test_file_organizer.py` — including the `--dry-run` preview, hidden
 files being left alone, and name collisions being renamed instead of
