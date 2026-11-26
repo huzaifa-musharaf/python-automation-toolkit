@@ -25,6 +25,7 @@ pip install -r requirements.txt
 | `scripts/api_to_csv.py` | Fetches JSON from a REST API, flattens nested objects and writes a CSV. Handles list responses and object responses with a data key. |
 | `scripts/file_organizer.py` | Sorts a folder's files into subfolders by extension (`pdf/`, `jpg/`, …), with a `--dry-run` preview mode and collision-safe renaming. |
 | `scripts/excel_report.py` | Builds an `.xlsx` report from a CSV: the raw data plus a Summary sheet with count, total, average, min and max per category. |
+| `scripts/duplicate_finder.py` | Finds files with identical contents in a folder (size first, then SHA-256 hash) and can delete the extra copies, keeping one of each. |
 
 ## Quick examples
 
@@ -66,6 +67,13 @@ Summarise spending per city from the cleaned sample into an Excel report:
 python scripts/excel_report.py cleaned.csv --category city --value amount_spent -o report.xlsx
 ```
 
+Find duplicate files in a folder (same size, then same SHA-256 hash), and delete the extra copies after confirming:
+
+```bash
+python scripts/duplicate_finder.py ~/Downloads --min-size 1024
+python scripts/duplicate_finder.py ~/Downloads --delete
+```
+
 Every script supports `--help` for full options.
 
 ## Tests
@@ -85,7 +93,11 @@ wrapper, and the errors on bad input — and the file organising logic
 (`organise`, `target_folder_name`, `unique_destination`) in
 `tests/test_file_organizer.py` — including the `--dry-run` preview, hidden
 files being left alone, and name collisions being renamed instead of
-overwritten.
+overwritten — and the duplicate finding logic (`find_duplicates`,
+`hash_file`, `group_by_size`, `delete_duplicates`) in
+`tests/test_duplicate_finder.py` — including same-size files with different
+content not being flagged, hidden files being skipped, and deleting keeping
+the first copy.
 
 ## License
 
